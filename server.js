@@ -3,11 +3,12 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import {router} from "./routes/contactRoutes.js";
 import { errorHandler } from './middlewares/errorHandler.js';
+import { connectDb } from './config/dbConnnection.js';
 
 dotenv.config();
+connectDb();
 
 const port= process.env.PORT ;
-
 const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
