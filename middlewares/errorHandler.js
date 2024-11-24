@@ -1,4 +1,4 @@
-import next from "next";
+
 import { errorConstants } from "../constants.js";
 
 const errorHandler = (err, req, res, next)=>{
@@ -23,6 +23,7 @@ const errorHandler = (err, req, res, next)=>{
             break;
         default:
             console.log("The Problem is : ", err);
+            break
     }
 }; 
 
