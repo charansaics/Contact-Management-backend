@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const userSchema = mongoose.Schema({
     username:{
@@ -14,9 +15,24 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Please add the user password"],
     },
+    refreshToken:{
+        type: String,
+    },
 },{
     timestamps:true,
 });
+
+userSchema.methods.generateAccessToken = function (user){
+    const accessToken = jwt.sign({
+        user:{
+            username:user.username,
+            email:user.email,
+            id:user.id,
+        }
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "15m"});
+};
 
 const User = mongoose.model("User",userSchema);
 

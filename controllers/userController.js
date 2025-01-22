@@ -57,11 +57,72 @@ const loginUser = asyncHandler( async (req, res)=>{
         },
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: "15m"});
-        res.status(200).json({accessToken});
+
+        const refreshToken = jwt.sign({
+            user:{
+                id:user.id,
+            }
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        {expiresIn: "7d"});
+        
+        // Save refresh token in the database
+        user.refreshToken = refreshToken;
+        await user.save();
+
+        const options = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",  // Use secure cookies in production only
+            sameSite: "Strict",
+        };
+        
+        res.cookie("accessToken",accessToken,options)
+        res.cookie("refreshToken", refreshToken, options)
+        res.status(200).json({accessToken, refreshToken});
     } else {
         res.status(401);
         throw new Error("Email address or password is not valid ");
     };
+});
+
+//@desc viewing current user
+//@route POST /api/users/logout
+// @access private
+//complete this function
+const logoutUser = asyncHandler( async(req,res)=>{
+    //we should delete access token and refresh token here and in db 
+    const {refreshToken} = req.cookies;
+
+    if (!refreshToken){
+        res.status(400);
+        throw new Error("refreshToken is missing");
+    }
+
+    //find user by using refresh token
+    const user = await User.findOne({refreshToken});
+    if(!user){
+        res.status(400);
+        throw new Error("Invalid refreshtoken");
+    }
+
+    //remove refresh token from the database 
+    user.refreshToken = null ;
+    await user.save();
+
+
+    //clear cookies
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+    });
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+    });
+    res.status(200).json({ message: "User logged out successfully" });
+    
 });
 
 //@desc viewing current user
@@ -73,4 +134,4 @@ const currentUser = asyncHandler( async (req, res)=>{
 
 
 
-export {registerUser, loginUser, currentUser};
+export {registerUser, loginUser, logoutUser, currentUser};
