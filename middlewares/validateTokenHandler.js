@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
+// Middleware to validate access token
 const validateToken = asyncHandler(async (req, res, next) => {
     let authHeader = req.headers.authorization || req.headers.Authorization;
     
@@ -23,8 +24,9 @@ const validateToken = asyncHandler(async (req, res, next) => {
     }
 });
 
+// Function to check and validate refresh token
 const checkRefreshToken = asyncHandler(async (req, res, next) => {
-    const refreshToken = req.cookies?.refreshToken;
+    const refreshToken = req.headers['x-refresh-token'];
 
     if (!refreshToken) {
         return res.status(401).json({ message: "User is not authorized, please login again" });
@@ -40,7 +42,7 @@ const checkRefreshToken = asyncHandler(async (req, res, next) => {
             if (!user || user.refreshToken !== refreshToken) {
                 return res.status(403).json({ message: "Invalid refresh token" });
             }
-            // Generate new access token and set it in the response header
+            // Generate a new access token and passing it as header
             const newAccessToken = jwt.sign(
                 {
                     user: {
@@ -61,4 +63,4 @@ const checkRefreshToken = asyncHandler(async (req, res, next) => {
     });
 });
 
-export default validateToken;
+export { validateToken };

@@ -85,32 +85,29 @@ const loginUser = asyncHandler( async (req, res)=>{
     };
 });
 
-//@desc viewing current user
+//@desc user logout
 //@route POST /api/users/logout
 // @access private
-//complete this function
 const logoutUser = asyncHandler( async(req,res)=>{
-    //we should delete access token and refresh token here and in db 
-    const {refreshToken} = req.cookies;
+    const { refreshToken } = req.body; // Receive refresh token from request body
 
     if (!refreshToken){
         res.status(400);
-        throw new Error("refreshToken is missing");
+        throw new Error("Refresh token is missing");
     }
 
-    //find user by using refresh token
-    const user = await User.findOne({refreshToken});
+    // Find user by using refresh token
+    const user = await User.findOne({ refreshToken });
     if(!user){
         res.status(400);
-        throw new Error("Invalid refreshtoken");
+        throw new Error("Invalid refresh token");
     }
 
-    //remove refresh token from the database 
-    user.refreshToken = null ;
+    // Remove refresh token from the database 
+    user.refreshToken = null;
     await user.save();
 
-
-    //clear cookies
+    // Clear cookies
     res.clearCookie("accessToken", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -122,7 +119,6 @@ const logoutUser = asyncHandler( async(req,res)=>{
         sameSite: "Strict",
     });
     res.status(200).json({ message: "User logged out successfully" });
-    
 });
 
 //@desc viewing current user
@@ -131,7 +127,5 @@ const logoutUser = asyncHandler( async(req,res)=>{
 const currentUser = asyncHandler( async (req, res)=>{
     res.json(req.user);
 });
-
-
 
 export {registerUser, loginUser, logoutUser, currentUser};
