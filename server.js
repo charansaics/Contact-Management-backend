@@ -17,7 +17,7 @@ const app = express();
 
 // Enable CORS for all routes
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust the origin to the correct port
+  origin:  process.env.FRONTEND_URL, // Adjust the origin to the correct port
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 app.use(cookieParser());
