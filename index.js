@@ -17,7 +17,11 @@ const app = express();
 
 // Enable CORS for all routes
 app.use(cors({
+<<<<<<< HEAD:index.js
   origin: process.env.FRONTEND_URL, // Adjust the origin to the correct port
+=======
+  origin:  process.env.FRONTEND_URL, // Adjust the origin to the correct port
+>>>>>>> 5e8c1473be5f59eb3343c3c8b830ffd7e16b2977:server.js
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 app.use(cookieParser());

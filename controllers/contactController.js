@@ -13,7 +13,7 @@ const getAllContacts = asyncHandler(async (req, res)=>{
 // @POST api/contacts
 // @access private
 const createContact = asyncHandler(async (req, res)=>{
-    console.log("The contact is :", req.body);
+    // console.log("The contact is :", req.body);
     const {name, email, phone}= req.body;
     if(!name || !email || !phone){
         res.status(400);
