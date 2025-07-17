@@ -23,6 +23,12 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Landing route for '/'
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'Contact Management API is running.' });
+});
+
 app.use("/api/contacts",router);
 app.use("/api/users",userRouter);
 app.use(errorHandler);
