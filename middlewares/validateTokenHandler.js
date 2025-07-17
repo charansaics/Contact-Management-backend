@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
+// Middleware to validate access token
 const validateToken = asyncHandler(async (req, res, next) => {
     let authHeader = req.headers.authorization || req.headers.Authorization;
     
@@ -23,6 +24,7 @@ const validateToken = asyncHandler(async (req, res, next) => {
     }
 });
 
+// Function to check and validate refresh token
 const checkRefreshToken = asyncHandler(async (req, res, next) => {
     const refreshToken = req.cookies?.refreshToken;
 
@@ -61,4 +63,4 @@ const checkRefreshToken = asyncHandler(async (req, res, next) => {
     });
 });
 
-export default validateToken;
+export { validateToken };
